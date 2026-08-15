@@ -60,6 +60,83 @@ int countTimesDialSettlesOnZero(std::vector<std::string> rotations, int dialStar
 	return numSettledOnZero;
 }
 
+
+int countZerosSeen(std::vector<std::string> rotations, int dialStart)
+{
+	int n = rotations.size();
+	int currentValue = dialStart;
+	int numZerosSeen = 0;
+
+	// for each of the rotations
+	for (int i = 0; i < n; i++)
+	{
+		int previousValue = currentValue;
+		// get the part of the string that is a number and convert that to an int
+		std::string stringToConvert;
+		for (int j = 1; j < rotations[i].size(); j++)
+		{
+			stringToConvert += rotations[i][j];
+		}
+		int numClicks = std::stoi(stringToConvert);
+
+		// every 100 clicks is a full rotation
+		int fullRotations = numClicks / 100;
+		// every full rotation means we've passed by zero
+		numZerosSeen += fullRotations;
+		// remaining clicks is a partial rotation
+		int partialRotation = numClicks % 100;
+
+
+		// get the first character which will always be R or L
+		// if R we add to the currentValue
+		// if L we subtract from the currentValue
+		// we add the partial rotation since that's the actual displacement from current value
+		if (rotations[i][0] == 'R')
+		{
+			currentValue += partialRotation;
+		}
+		// we subtract the partial rotation since that's the actual displacement from current value
+		else
+		{
+			currentValue -= partialRotation;
+		}
+
+		// with the partialRotation
+		// if we hit zero from the positive direction
+		if (currentValue > 99)
+		{
+			numZerosSeen++;
+		}
+		// if we went below zero without starting at zero
+		else if (currentValue < 0 && previousValue != 0)
+		{
+			numZerosSeen++;
+		}
+		// if we are at zero
+		else if (currentValue == 0)
+		{
+			numZerosSeen++;
+		}
+
+		// if the currentValue is positive
+		if (currentValue > 0)
+		{
+			// make sure we're between 0-99
+			currentValue %= 100;
+		}
+		// if the currentValue is negative
+		else if (currentValue < 0)
+		{	
+			// it is a displacement calculated backwards from 0 so we use 100
+			// if currentValue is -1 that means one click below zero which is at 99
+			currentValue = 100 + currentValue;
+		}
+	}
+
+	return numZerosSeen;
+}
+
+
 int main()
 {
 	/*
@@ -101,8 +178,10 @@ int main()
 
 	// The actual password is the number of times the dial is left pointing at 0 after any rotation in the sequence.
 	int numZeros = countTimesDialSettlesOnZero(rotations, start);
+	int zerosSeen = countZerosSeen(rotations, start);
 
-	std::cout << "The actual password is: " << numZeros << std::endl;
+	std::cout << "The Part 1 password is: " << numZeros << std::endl;
+	std::cout << "The Part 2 password is: " << zerosSeen << std::endl;
 
 	return 0;
 }
@@ -174,4 +253,35 @@ To begin, get your puzzle input.
 
 Answer: 1055
 ^the answer to my own puzzle input AOCDay12025Input
+*/
+
+
+/*
+--- Part Two ---
+You're sure that's the right password, but the door won't open. You knock, but nobody answers. You build a snowman while you think.
+
+As you're rolling the snowballs for your snowman, you find another security document that must have fallen into the snow:
+
+"Due to newer security protocols, please use password method 0x434C49434B until further notice."
+
+You remember from the training seminar that "method 0x434C49434B" means you're actually supposed to count the number of times any click causes the dial to point at 0, regardless of whether it happens during a rotation or at the end of one.
+
+Following the same rotations as in the above example, the dial points at zero a few extra times during its rotations:
+
+The dial starts by pointing at 50.
+The dial is rotated L68 to point at 82; during this rotation, it points at 0 once.
+The dial is rotated L30 to point at 52.
+The dial is rotated R48 to point at 0.
+The dial is rotated L5 to point at 95.
+The dial is rotated R60 to point at 55; during this rotation, it points at 0 once.
+The dial is rotated L55 to point at 0.
+The dial is rotated L1 to point at 99.
+The dial is rotated L99 to point at 0.
+The dial is rotated R14 to point at 14.
+The dial is rotated L82 to point at 32; during this rotation, it points at 0 once.
+In this example, the dial points at 0 three times at the end of a rotation, plus three more times during a rotation. So, in this example, the new password would be 6.
+
+Be careful: if the dial were pointing at 50, a single rotation like R1000 would cause the dial to point at 0 ten times before returning back to 50!
+
+Using password method 0x434C49434B, what is the password to open the door?
 */
