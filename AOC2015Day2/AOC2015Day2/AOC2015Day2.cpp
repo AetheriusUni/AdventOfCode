@@ -31,9 +31,39 @@ int getSurfaceAreaPlusSmallestArea(int l, int w, int h)
 	return surfaceAreaOfPresent + smallestArea;
 }
 
+int getRibbonRequired(int l, int w, int h)
+{
+	int ribbonRequired = 0;
+
+	// need the volume
+	int volume = l * w * h;
+
+	ribbonRequired += volume;
+	int ribbonNotInBow = 0;
+
+	// shortest distance ribbon is 2(smallest dimension) + 2(second smallest dimension)
+	if (l >= w && l >= h)
+	{
+		ribbonNotInBow = 2 * w + 2 * h;
+	}
+	else if (w >= l && w >= h)
+	{
+		ribbonNotInBow = 2 * l + 2 * h;
+	}
+	else
+	{
+		ribbonNotInBow = 2 * l + 2 * w;
+	}
+
+	ribbonRequired += ribbonNotInBow;
+
+	return ribbonRequired;
+}
+
 int getTotalWrappingPaperNeeded (std::vector<std::string> allPresentDimensions)
 {
 	int wrappingPaperNeeded = 0;
+	int ribbonRequired = 0;
 	int l = 0;
 	int w = 0;
 	int h = 0;
@@ -61,7 +91,11 @@ int getTotalWrappingPaperNeeded (std::vector<std::string> allPresentDimensions)
 		int currentPresentWrappingNeeded = getSurfaceAreaPlusSmallestArea(l, w, h);
 		// add to final area required
 		wrappingPaperNeeded += currentPresentWrappingNeeded;
+
+		// get the ribbon required for this present and add it to total ribbon needed
+		ribbonRequired += getRibbonRequired(l, w, h);
 	}
+	std::cout << "Elves need this much feet of ribbon: " << ribbonRequired << std::endl;
 
 	return wrappingPaperNeeded;
 }
