@@ -1,7 +1,0 @@
-<Solution>
-  <Configurations>
-    <Platform Name="x64" />
-    <Platform Name="x86" />
-  </Configurations>
-  <Project Path="AOC2015Day2/AOC2015Day2.vcxproj" Id="8b0482b3-5454-4e48-8b06-a7db0f2389b4" />
-</Solution>
